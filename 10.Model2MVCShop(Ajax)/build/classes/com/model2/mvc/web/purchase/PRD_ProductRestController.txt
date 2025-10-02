@@ -1,0 +1,253 @@
+=================================================
+PRD : Product Requirement Document : 제품요구서 작성 : ???
+--------------------------------------------------
+-- 용어에 익숙해지자 
+: 구현요구사항을 AI 에 전달 하는 skill 을 익힘.
+: 요구사항을 정확히 지시 : Prompt Detail
+: 직접 지시가 아니라 AI 와 협업 
+   예> 이렇게 하려면 어떻게 해야해 ? 
+         : 난 알고 있지만. AI 가 생각하고 해결 할 수 있도록
+
+: Low-code / Prompt Engineering / Ai-assisted coding
+=================================================
+
+
+##### Prompt > PurchaseRestController.java 구현
+
+
+0. PurchaseService.java
+
+package com.model2.mvc.service.purchase;
+
+import java.util.Map;
+
+import com.model2.mvc.common.Search;
+import com.model2.mvc.service.domain.Purchase;
+
+
+//==> 구매 관리에서 서비스할 내용 추상화/캡슐화한 Service Interface Definition  
+public interface PurchaseService {
+	
+	// 구매 등록
+	public void addPurchase(Purchase purchase) throws Exception;
+	
+	// 구매 조회
+	public Purchase getPurchase(int tranNo) throws Exception;
+	
+	// 구매 목록
+	public Map<String, Object> getPurchaseList(Search search) throws Exception;
+	
+	// 판매 목록
+	public Map<String, Object> getSaleList(Search search) throws Exception;
+	
+	// 구매 수정
+	public void updatePurchase(Purchase purchase) throws Exception;
+	
+	// 거래 상태(TranCode) 수정
+	public void updateTranCode(Purchase purchase) throws Exception;
+	
+	// 구매 총 개수 (옵션)
+	public int getTotalCount(Search search) throws Exception;
+}
+
+1. Purchase.java 
+
+package com.model2.mvc.service.domain;
+
+import java.sql.Date;
+
+
+public class Purchase {
+	
+	private User buyer;
+	private String divyAddr;
+	private String divyDate;
+	private String divyRequest;
+	private Date orderDate;
+	private String paymentOption;
+	private Product purchaseProd;
+	private String receiverName;
+	private String receiverPhone;
+	private String tranCode;
+	private int tranNo;
+	
+	public Purchase(){
+	}
+	
+	public User getBuyer() {
+		return buyer;
+	}
+	public void setBuyer(User buyer) {
+		this.buyer = buyer;
+	}
+	public String getDivyAddr() {
+		return divyAddr;
+	}
+	public void setDivyAddr(String divyAddr) {
+		this.divyAddr = divyAddr;
+	}
+	public String getDivyDate() {
+		return divyDate;
+	}
+	public void setDivyDate(String divyDate) {
+		this.divyDate = divyDate;
+	}
+	public String getDivyRequest() {
+		return divyRequest;
+	}
+	public void setDivyRequest(String divyRequest) {
+		this.divyRequest = divyRequest;
+	}
+	public Date getOrderDate() {
+		return orderDate;
+	}
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
+	}
+	public String getPaymentOption() {
+		return paymentOption;
+	}
+	public void setPaymentOption(String paymentOption) {
+		this.paymentOption = paymentOption;
+	}
+	public Product getPurchaseProd() {
+		return purchaseProd;
+	}
+	public void setPurchaseProd(Product purchaseProd) {
+		this.purchaseProd = purchaseProd;
+	}
+	public String getReceiverName() {
+		return receiverName;
+	}
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
+	}
+	public String getReceiverPhone() {
+		return receiverPhone;
+	}
+	public void setReceiverPhone(String receiverPhone) {
+		this.receiverPhone = receiverPhone;
+	}
+	public String getTranCode() {
+		return tranCode;
+	}
+	public void setTranCode(String tranCode) {
+		this.tranCode = tranCode;
+	}
+	public int getTranNo() {
+		return tranNo;
+	}
+	public void setTranNo(int tranNo) {
+		this.tranNo = tranNo;
+	}
+	public String getTranCodeName() {
+		String code = (this.tranCode != null) ? this.tranCode.trim() : "";
+		
+        switch(code) {
+            case "0": return "판매중";
+            case "1": return "구매완료";
+            case "2": return "배송중";
+            case "3": return "배송완료";
+            case "4": return "재고없음";
+            default: return "상태없음";
+        }
+    }
+	
+	@Override
+	public String toString() {
+		return "Purchase [buyer=" + buyer + ", divyAddr=" + divyAddr
+				+ ", divyDate=" + divyDate + ", divyRequest=" + divyRequest
+				+ ", orderDate=" + orderDate + ", paymentOption="
+				+ paymentOption + ", purchaseProd=" + purchaseProd
+				+ ", receiverName=" + receiverName + ", receiverPhone="
+				+ receiverPhone + ", tranCode=" + tranCode + ", tranNo="
+				+ tranNo + "]";
+	}
+}
+
+
+2. Search.java
+
+package com.model2.mvc.common;
+
+
+//==>리스트화면을 모델링(추상화/캡슐화)한 Bean 
+public class Search {
+	
+	///Field
+	private int currentPage;
+	private String searchCondition;
+	private String searchKeyword;
+	private int pageSize;
+	//==> 리스트화면 currentPage에 해당하는 회원정보를 ROWNUM 사용 SELECT 위해 추가된 Field 
+	//==> UserMapper.xml 의 
+	//==> <select  id="getUserList"  parameterType="search"	resultMap="userSelectMap">
+	//==> 참조
+	private int endRowNum;
+	private int startRowNum;
+	
+	///Constructor
+	public Search() {
+	}
+	
+	///Method
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int paseSize) {
+		this.pageSize = paseSize;
+	}
+	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public String getSearchCondition() {
+		return searchCondition;
+	}
+	public void setSearchCondition(String searchCondition) {
+		this.searchCondition = searchCondition;
+	}
+	
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
+	public void setSearchKeyword(String searchKeyword) {
+		this.searchKeyword = searchKeyword;
+	}
+	
+	//==> Select Query 시 ROWNUM 마지막 값 
+	public int getEndRowNum() {
+		return getCurrentPage()*getPageSize();
+	}
+	//==> Select Query 시 ROWNUM 시작 값
+	public int getStartRowNum() {
+		return (getCurrentPage()-1)*getPageSize()+1;
+	}
+
+	@Override
+	public String toString() {
+		return "Search [currentPage=" + currentPage + ", searchCondition="
+				+ searchCondition + ", searchKeyword=" + searchKeyword
+				+ ", pageSize=" + pageSize + ", endRowNum=" + endRowNum
+				+ ", startRowNum=" + startRowNum + "]";
+	}
+}
+
+
+3. PurchaseService 각각의 Method 를 호출 PurchaseRestController
+: URL Prefix : /purchase/json/
+: 구매등록 : /addPurchase
+: 구매조회 : /getPurchase
+: 구매리스트 : /getPurchaseList
+: 구매수정 : /updatePurchase
+: 거래 상태(TranCode) 수정 : /updateTranCode
+
+4. 자세한 주석 처리 
+
+5. @Qualifier("purchaseServiceImpl"), @PostMapping, @GetMapping 명확하게 사용
+6. 단순 boolean, Purchase, Map 반환
+7. 메서드에서 "json/..." 붙임

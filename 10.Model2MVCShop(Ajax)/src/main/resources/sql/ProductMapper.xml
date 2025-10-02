@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+ 	
+	<!-- resultMap -->
+	<resultMap id="productSelectMap" type="product">
+		<id     property="prodNo"     column="prod_no"         jdbcType="NUMERIC"/>
+		<result property="prodName"   column="prod_name"       jdbcType="VARCHAR"/>
+		<result property="prodDetail" column="prod_detail"     jdbcType="VARCHAR"/>
+		<result property="manuDate"   column="manufacture_day" jdbcType="VARCHAR"/>
+		<result property="price"      column="price"           jdbcType="NUMERIC"/>
+		<result property="fileName"   column="image_file"      jdbcType="VARCHAR"/>
+		<result property="regDate"    column="reg_date"        jdbcType="DATE"/>
+		
+		<result property="tranNo" column="tran_no"/>
+    	<result property="proTranCode" column="tran_status_code"/>
+	</resultMap>
+	
+	<!-- SQL : INSERT -->
+	<insert id="addProduct" parameterType="product">
+		INSERT INTO product
+			(prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date)
+		VALUES
+			(seq_product_prod_no.NEXTVAL, #{prodName}, #{prodDetail}, #{manuDate}, #{price}, #{fileName,jdbcType=VARCHAR}, SYSDATE)
+	</insert>
+	 
+	<!-- SQL : SELECT ONE -->
+	<select id="getProduct" parameterType="int" resultMap="productSelectMap">
+		SELECT
+			prod_no, prod_name, prod_detail, manufacture_day, price, image_file, reg_date
+		FROM product
+		WHERE prod_no = #{value}
+	</select>
+	 
+	<!-- SQL : UPDATE -->
+	<update id="updateProduct" parameterType="product">
+	   	UPDATE product
+	   	<set>
+	   		prod_name       = #{prodName},
+			prod_detail     = #{prodDetail},
+			manufacture_day = #{manuDate},
+			price           = #{price},
+			image_file      = #{fileName,jdbcType=VARCHAR}
+	   	</set>
+	   	WHERE prod_no = #{prodNo}
+	</update>
+		 
+	<!-- SQL : SELECT LIST -->
+	<select id="getProductList" parameterType="search" resultMap="productSelectMap">
+	    SELECT *
+	    FROM (
+	        SELECT inner_table.*, ROWNUM AS row_seq
+	        FROM (
+	            SELECT p.*,
+	                   pu.tran_status_code,
+	                   pu.tran_no
+	            FROM product p, transaction pu
+	            WHERE p.prod_no = pu.prod_no(+)
+	            <if test="searchCondition != null and searchKeyword != null and searchKeyword != ''">
+	                <choose>
+	                    <when test="searchCondition == 0">
+	                        AND p.prod_no LIKE '%' || #{searchKeyword} || '%'
+	                    </when>
+	                    <when test="searchCondition == 1">
+	                        AND p.prod_name LIKE '%' || #{searchKeyword} || '%'
+	                    </when>
+	                    <when test="searchCondition == 2">
+	                        AND p.price LIKE '%' || #{searchKeyword} || '%'
+	                    </when>
+	                </choose>
+	            </if>
+	            ORDER BY p.prod_no DESC
+	        ) inner_table
+	        WHERE ROWNUM <![CDATA[ <= ]]> #{endRowNum}
+	    )
+	    WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+
+	<!-- SQL : SELECT ROW Count -->	 
+	<select id="getTotalCount" parameterType="search" resultType="int">
+	    SELECT COUNT(*)
+	    FROM (
+	        SELECT p.prod_no,
+	               p.prod_name,
+	               p.price,
+	               pu.tran_status_code,
+	               pu.tran_no
+	        FROM product p, transaction pu
+	        WHERE p.prod_no = pu.prod_no(+)
+	        <if test="searchCondition != null and searchKeyword != null and searchKeyword != ''">
+	            <choose>
+	                <when test="searchCondition == 0">
+	                    AND p.prod_no LIKE '%' || #{searchKeyword} || '%'
+	                </when>
+	                <when test="searchCondition == 1">
+	                    AND p.prod_name LIKE '%' || #{searchKeyword} || '%'
+	                </when>
+	                <when test="searchCondition == 2">
+	                    AND p.price LIKE '%' || #{searchKeyword} || '%'
+	                </when>
+	            </choose>
+	        </if>
+	    ) countTable
+	</select>
+	
+	<!-- 이미지 개별 삭제 -->
+    <update id="deleteImageFromProduct">
+        UPDATE product
+        <set>
+            image_file = 
+            TRIM(BOTH ',' FROM REPLACE(
+                REPLACE(image_file, #{fileNameToDelete}, ''), ',,', ','
+            ))
+        </set>
+        WHERE prod_no = #{prodNo}
+    </update>
+
+    <!-- 상품 전체 삭제 -->
+    <delete id="deleteProduct" parameterType="int">
+        DELETE FROM product
+        WHERE prod_no = #{value}
+    </delete>
+    
+</mapper>
