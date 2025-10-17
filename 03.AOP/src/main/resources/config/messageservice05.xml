@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Target Object Definition :: AutoProxyCreator 사용으로 변경  -->
+	<!--  <bean 	id="messageTarget"	class="spring.service.aop.impl.MessageImpl"/> -->
+	<bean  	id="message"  class="spring.service.aop.impl.MessageImpl"/>
+	
+	<!-- advice Definition -->
+	<bean 	id="testAdvice"		class="spring.service.aop.advice.TestAdvice"/>
+					
+	<!-- 	Point Cut Definition : advice 를 어느 join-point 에 적용 Rule
+			Point Cut Definition 삭제 :: Aspect 내부에 Point Cut injection-->
+
+	<!-- Advisor(Aspect)  Definition: advice + Point Cut -->
+	 <bean 	id="testAdvisor"
+			class="org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">
+			<property name="advice" ref="testAdvice"/>
+			<property name="expression" value="execution(* *.getMessage(..))" />
+	</bean>
+	<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->		
+	
+	<!-- Dynamic Proxy 를 생성하는 ProxyFactoryBean 생성 삭제 -->
+	
+	<!-- Dynamic Proxy 를 자동으로 생성하는 AutoProxyCreator Definition -->
+	<bean   
+	class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+   	 <!--  AutoProxying
+	 		- 특정 Target Object 프록시객체를 명시적인 선언으로 생성하는 것이 아닌 
+	 		   Advisor(Aspect) 에 정의된 Point Cut 정보를 보고 자동생성   	
+ 			- Point Cut 과 일치하는 메서드를 가진 모든 빈을 찾아 Dynamic Proxy 생성 -->
+</beans>

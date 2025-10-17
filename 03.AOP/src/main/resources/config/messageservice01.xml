@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Target Object Definition -->
+	<bean 	id="messageTarget"	class="spring.service.aop.impl.MessageImpl"/>
+					
+	<!-- advice Definition -->
+	<bean 	id="beforeLogAdvice" 	class="spring.service.aop.advice.BeforeLogAdvice"/>
+	
+	
+	<!-- Dynamic Proxy 를  생성하는 ProxyFactoryBean 생성 -->
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////  
+		[[ 참조 :: MessageTestUseProxyAPI.java  참조 ]]
+		Manager  manageProxy 
+			= (Manager)Proxy.newProxyInstance(	ManagerImpl.class.getClassLoader(),
+																				new Class[]{ Manager.class}, 
+																				logHandler	);
+		==>Spring 은 Dynamic Proxy 생성을  ProxyFactoryBean 을 이용 
+		==>ProxyFactoryBean 에게 전달(injection) 되어야 하는 정보는...
+		 	  -  하나 : interface == > Message 
+ 			  -  두울 : TargetObjcet ==>  MessageImpl
+ 			  -  세엣 : TargetObjcet  메서드 호출 전,후 또는 처리할 advice  																				 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+		
+	<bean 	id="message"  class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces" value="spring.service.aop.Message"/>
+		<property name="interceptorNames" value="beforeLogAdvice" />
+		<property name="target" ref="messageTarget"/>
+	</bean>
+	
+</beans>

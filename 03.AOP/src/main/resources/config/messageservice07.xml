@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd
+					
+					http://www.springframework.org/schema/aop
+					http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+	<!-- Target Object Definition :: AutoProxyCreator 사용 -->
+	<bean  	id="message"  class="spring.service.aop.impl.MessageImpl"/>
+	
+	<!-- Advisor(Aspect = Advice + Point Cut) Definition :: Annotation 기반 -->
+	<bean 	id="testAspect"		class="spring.service.aop.advice.TestAspectJ02"/>
+					
+	<!-- Dynamic Proxy 를 자동으로 생성하는 AutoProxyCreator Definition :: Annotation 기반-->
+	<aop:aspectj-autoproxy/>
+
+</beans>

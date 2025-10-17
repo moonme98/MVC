@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd
+					http://www.springframework.org/schema/aop
+					http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+	<!-- Target Object Definition :: AutoProxyCreator 사용 -->
+	<bean  	id="message"  class="spring.service.aop.impl.MessageImpl" />
+	
+	<!-- 일반 Bean Definition :: POJO 기반 -->
+	<bean 	id="pojoAspect"		class="spring.service.aop.advice.PojoAspectJ" />
+					
+	<!-- 1. 선언적으로 Point cut / Advice 정의 
+				:: TestAspectJ01.java(pointCut 따로정의) 의 annotation과 아래를 비교 -->
+	 <aop:config>
+	 	<aop:aspect  ref="pojoAspect">
+	 		<aop:pointcut expression="execution(* *.getMessage(..))" 	id="work"/>
+	 		<aop:before	
+	 				pointcut-ref="work" 	method="before" />
+	 		<aop:after-returning
+ 					pointcut-ref="work"	method="afterReturning" 	returning="returnValue"/>
+	 		<aop:around 
+					pointcut-ref="work"	method="invoke"/>
+	 		<aop:after-throwing 
+					pointcut-ref="work" 	method="afterThrowing" 		throwing="throwable"/>
+	 	</aop:aspect>
+	 </aop:config>	
+	 
+	 <!-- 2. 선언적으로 Point cut / Advice 정의 
+	 			:: TestAspectJ02.java(pointCut+advice 합치기(?)) 의 annotation과 아래를 비교
+	 <aop:config>
+	 	
+	 	<aop:aspect  ref="pojoAspect">
+	 		<aop:before	
+ 					pointcut="execution(* *.getMessage(..))" 	method="before" />
+	 		<aop:after-returning
+ 					pointcut="within(spring.service.aop..*)"	method="afterReturning" 
+ 					returning="returnValue"/>
+	 		<aop:around 
+					pointcut="execution(* spring.service.aop.*.*(..) )"	method="invoke"/>
+	 		<aop:after-throwing 
+	 					pointcut="execution (public * *(..))" 	method="afterThrowing" 		
+	 					throwing="throwable"/>
+	 	</aop:aspect>
+	 </aop:config> -->
+</beans>
