@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1. Dice 구현체 Bean 등록 -->
+    <bean id="diceA" class="spring.service.dice.impl.DiceAImpl"/>
+    <bean id="diceB" class="spring.service.dice.impl.DiceBImpl"/>
+    <bean id="diceC" class="spring.service.dice.impl.DiceCImpl"/>
+
+    <!-- 2. Player02 - Setter Injection (DiceAImpl 주입) -->
+    <bean id="player02WithSetter" class="spring.service.dice.play.Player02">
+        <property name="dice" ref="diceA"/>
+    </bean>
+
+    <!-- 3. Player02 - Constructor Injection (DiceBImpl 주입) -->
+    <bean id="player02WithConstructor" class="spring.service.dice.play.Player02">
+        <constructor-arg ref="diceB"/>
+    </bean>
+
+</beans>
