@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+  version="4.0"
+  metadata-complete="true">
+					
+	<!--  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+           //==> Meta-Data 이름 변경 / 모듈화 
+           :: SpringMVC 의 default meta-data : servletName-servlet.xml  
+           :: default 화일 이름 변경 및 여러개의 Meta-Data 사용시
+           //==> DipatcherServlet 에  init-param value로 전달
+           /////////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+       <init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/module01-servlet.xml , 	
+				/WEB-INF/module02-servlet.xml
+			</param-value>
+		</init-param>
+		<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+	<!-- 확장자가 ~.do 경우 action servlet-name 으로 선언적이름을 갖는 Servlet 처리 -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+</web-app>

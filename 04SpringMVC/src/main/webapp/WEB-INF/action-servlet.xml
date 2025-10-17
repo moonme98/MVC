@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+								 http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<!-- 	:: Client 의 Request URI와 Controller 을 연결시켜 주는 HandlerMapping  
+			:: 아래와 같이 서술적 기술 Test 후 주석처리해서 Test 할것 :: Default / Zero Configuration -->
+	 <bean id="beanNameUrlMapping" 
+	 			 class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+
+
+	<!-- 	::	Client 에 보여줄 Data(Model) 랜더링 / view 화면 Navigation 하는ViewResolver 
+			:: 아래와 같이 서술적 기술 Test 후 주석처리해서 Test 할것 :: Default / Zero Configuration -->	
+    <bean id="viewResolver" 
+    			class="org.springframework.web.servlet.view.InternalResourceViewResolver" />
+
+
+	 <!--	:: Client 의 요구사항을 처리할  Controller 
+	 		::	http://ip:port/contextRoot/zzz.do    
+	 		:: Request 시 test.HelloSpringController 실행 -->
+	<bean name="/zzz.do" class="test.HelloSpringController" />
+
+</beans>
