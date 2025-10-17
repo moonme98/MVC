@@ -1,5 +1,6 @@
 package com.model2.mvc.web.purchase;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -9,9 +10,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
@@ -97,6 +101,18 @@ public class PurchaseController {
 		mav.addObject("purchase", purchase);
 		return mav;
 	}
+	
+	@PostMapping("/purchase/kakaoReady")
+	@ResponseBody
+	public Map<String,String> kakaoPayReady(@RequestBody Map<String,String> data) {
+	    // RestTemplate 등으로 카카오페이 "결제 준비 API" 호출
+	    // ex) data.get("prodNo"), data.get("userId"), data.get("itemName"), data.get("totalAmount")
+	    // tid, next_redirect_pc_url 받기
+	    Map<String,String> result = new HashMap<>();
+	    result.put("next_redirect_pc_url", "카카오페이에서 받은 redirect URL"); // 실제 URL로 대체
+	    return result;
+	}
+
 	
 	// === 구매 상세 조회 ===
 	@RequestMapping(value="getPurchase", method=RequestMethod.GET)
