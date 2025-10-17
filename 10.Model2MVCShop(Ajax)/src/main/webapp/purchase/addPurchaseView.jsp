@@ -11,54 +11,66 @@
 	
 	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script type="text/javascript">
 	
-		function fncAddPurchase() {
+	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
+	<script src="https://developers.kakaopay.com/sdk/kakaopay.min.js"></script>
+	
+	<script type="text/javascript">
 
-		    var name=$("input[name='receiverName']").val();
-			var phone=$("input[name='receiverPhone']").val();
-			var addr=$("input[name='divyAddr']").val();
-			
-			if(name == null || name.length<1){
-				alert("이름은 반드시 입력하여야 합니다.");
-				return;
-			}
-			if(phone == null || phone.length<1){
-				alert("연락처는 반드시 입력하여야 합니다.");
-				return;
-			}
-			if(addr == null || addr.length<1){
-				alert("주소는 반드시 입력하셔야 합니다.");
-				return;
-			}
-			
-			//document.addPurchase.submit();
-			$("form").attr("method" , "POST").attr("enctype" , "multipart/form-data").attr("action" , "/purchase/addPurchase").submit();
-		}
-		
-		//==> 추가된부분 : "취소" "구매" Event 처리 및  연결
-		$(function() {
-			 $( "td.ct_btn01:contains('취소')" ).on("click" , function() {
-				//Debug..
-				//alert(  $( "td.ct_btn01:contains('취소')" ).html() );
-				history.go(-1);
-			});
-			 
-			 $( "td.ct_btn01:contains('구매')" ).on("click" , function() {
-				//Debug..
-				//alert(  $( "td.ct_btn01:contains('구매')" ).html() );
-				fncAddPurchase();			
-			});
-		});	
-		
-		// 캘린더
-		$(function() {
-	      $("input[name='divyDate']").datepicker({
-	        dateFormat: "yy-mm-dd"
-	      });
-	    });
-		
+	function fncAddPurchase() {
+	    var name = $("input[name='receiverName']").val();
+	    var phone = $("input[name='receiverPhone']").val();
+	    var addr = $("input[name='divyAddr']").val();
+	    var paymentOption = $("select[name='paymentOption']").val(); // 추가
+	
+	    if (!name || !phone || !addr) {
+	        alert("이름, 연락처, 주소는 반드시 입력해야 합니다.");
+	        return;
+	    }
+	
+	    if(paymentOption === "2"){ // 신용구매
+	        // 서버에 결제 준비 요청
+	        $.ajax({
+	            url: '/purchase/kakaoReady',  // 서버 컨트롤러에서 결제 준비
+	            method: 'POST',
+	            contentType: 'application/json',
+	            data: JSON.stringify({
+	                prodNo: $("input[name='prodNo']").val(),
+	                userId: $("input[name='buyer.userId']").val(),
+	                itemName: "${product.prodName}", // JSP에서 출력된 상품명
+	                totalAmount: "${product.price}"   // JSP에서 출력된 가격
+	            }),
+	            success: function(res){
+	                // 결제 페이지 URL로 이동
+	                if(res.next_redirect_pc_url){
+	                    window.location.href = res.next_redirect_pc_url;
+	                } else {
+	                    alert("결제 준비 중 오류 발생");
+	                    console.error(res);
+	                }
+	            },
+	            error: function(err){
+	                alert("카카오페이 요청 오류");
+	                console.error(err);
+	            }
+	        });
+	    } else {
+	        // 현금 구매는 바로 주문 제출
+	        $("form[name='addPurchase']")
+	            .attr("method", "POST")
+	            .attr("enctype", "multipart/form-data")
+	            .attr("action", "/purchase/addPurchase")
+	            .submit();
+	    }
+	}
+	
+	$(function() {
+	    $("td.ct_btn01:contains('구매')").on("click", fncAddPurchase);
+	    $("td.ct_btn01:contains('취소')").on("click", function(){ history.go(-1); });
+	});
 	</script>
+
+	
 </head>
 
 <body>
@@ -174,7 +186,8 @@
         <td class="ct_write">구매자주소</td>
         <td bgcolor="D6D6D6"></td>
         <td class="ct_write01">
-            <input type="text" name="divyAddr" class="ct_input_g" style="width: 100px; height: 19px" maxLength="20" value=""/>
+            <input type="text" id="addr" name="divyAddr" class="ct_input_g" style="width: 100px; height: 19px" maxLength="20" value=""/>
+            <button type="button" id="btnAddr">우편번호 검색</button>
         </td>
     </tr>
     <tr><td height="1" colspan="3" bgcolor="D6D6D6"></td></tr>

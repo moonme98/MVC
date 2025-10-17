@@ -3,7 +3,6 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="UTF-8">
 	
@@ -13,8 +12,9 @@
 	
 	<!-- CDN(Content Delivery Network) 호스트 사용 -->
 	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
 	<script type="text/javascript">
-		
+
 		function fncAddUser() {
 			
 			var id=$("input[name='userId']").val();
@@ -142,6 +142,17 @@
 											"scrollbars=no,scrolling=no,menubar=no,resizable=no");
 			});
 		});	
+		
+		//우편번호
+		$(function() {
+		    $("#btnAddr").click(function() {
+		        new daum.Postcode({
+		            oncomplete: function(data) {
+		                $("#addr").val(data.address);
+		            }
+		        }).open();
+		    });
+		});
 
 	</script>		
 	
@@ -272,14 +283,15 @@
 	</tr>
 	
 	<tr>
-		<td width="104" class="ct_write">주소</td>
-		<td bgcolor="D6D6D6" width="1"></td>
-		<td class="ct_write01">
-			<input		type="text" name="addr" class="ct_input_g" 
-						 	style="width:370px; height:19px"  maxLength="100"/>
-		</td>
+	    <td width="104" class="ct_write">주소</td>
+	    <td bgcolor="D6D6D6" width="1"></td>
+	    <td class="ct_write01">
+	        <input type="text" name="addr" id="addr" class="ct_input_g" 
+	               style="width:370px; height:19px" maxLength="100" readonly/>
+	        <button type="button" id="btnAddr">우편번호 검색</button>
+	    </td>
 	</tr>
-	
+
 	<tr>
 		<td height="1" colspan="3" bgcolor="D6D6D6"></td>
 	</tr>

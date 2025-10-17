@@ -1,153 +1,134 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <!DOCTYPE html>
 <html>
-
 <head>
-	<title>구매 목록조회</title>
+    <title>구매 목록조회</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        var currentPage = 1;
+        var isLoading = false;
+        var hasMoreData = true;
 
-	<link rel="stylesheet" href="/css/admin.css" type="text/css">
-	
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<script type="text/javascript">
-	
-		//검색 / page 두가지 경우 모두 Form 전송을 위해 JavaScrpt 이용  
-		function fncGetUserList(currentPage) {
-		    //document.getElementById("currentPage").value = currentPage;
-		    //document.detailForm.submit();	
-			$("#currentPage").val(currentPage)
-			$("form").attr("method" , "POST").attr("action" , "/purchase/listPurchase").submit();
-		}
-		
-		$(function() {
-			$("td[data-tranno]").on("click", function() {
-		        var tranNo = $(this).data("tranno");
-		        
-		        if(tranNo){
-		            location.href = "/purchase/getPurchase?tranNo=" + tranNo;
-		        }
-		    });
+        $(function() {
+            // 무한 스크롤 구현
+            $(window).on('scroll', function() {
+                if (isLoading || !hasMoreData) return;
+                
+                var scrollHeight = $(document).height();
+                var scrollPosition = $(window).height() + $(window).scrollTop();
+                
+                if ((scrollHeight - scrollPosition) / scrollHeight < 0.1) {
+                    loadMorePurchases();
+                }
+            });
 
-		    $("td[data-userid]").on("click", function() {
-		        var userId = $(this).data("userid");
-		        
-		        if(userId){
-		            location.href = "/user/getUser?userId=" + userId;
-		        }
-		    });
+            // 주문상세 버튼 클릭
+            $(document).on("click", ".order-detail-btn", function() {
+                var tranNo = $(this).data("tranno");
+                if(tranNo) {
+                    location.href = "/purchase/getPurchase?tranNo=" + tranNo;
+                }
+            });
 
-		    $(".arrival-btn").on("click", function() {
-		        var tranNo = $(this).data("tranno");
-		        
-		        if(tranNo){
-		            location.href = "/purchase/updateTranCode?tranNo=" + tranNo + "&tranCode=3";
-		        }
-		    });
-			
-			// 임시 LINK Event 색 구분
-			$( ".ct_list_pop td:nth-child(3)" ).css("color" , "red");
-			$(".ct_list_pop:nth-child(4n+6)" ).css("background-color" , "whitesmoke");
-		});
-		
-</script>
+            // 물건도착 버튼 클릭
+            $(document).on("click", ".arrival-btn", function() {
+                var tranNo = $(this).data("tranno");
+                if(tranNo) {
+                    location.href = "/purchase/updateTranCode?tranNo=" + tranNo + "&tranCode=3";
+                }
+            });
+        });
+
+        function loadMorePurchases() {
+            if (isLoading || !hasMoreData) return;
+            
+            isLoading = true;
+            currentPage++;
+            
+            $.ajax({
+                url: '/purchase/listPurchase',
+                type: 'POST',
+                data: { currentPage: currentPage },
+                success: function(response) {
+                    var newItems = $(response).find('.purchase-item');
+                    
+                    if (newItems.length === 0) {
+                        hasMoreData = false;
+                        $('#loading-indicator').hide();
+                    } else {
+                        $('#purchase-list').append(newItems);
+                    }
+                    
+                    isLoading = false;
+                },
+                error: function() {
+                    isLoading = false;
+                    alert('데이터를 불러오는데 실패했습니다.');
+                }
+            });
+        }
+    </script>
 </head>
+<body class="bg-white">
+    <div class="max-w-5xl mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-8">주문 내역</h1>
+        
+        <div id="purchase-list">
+            <c:forEach var="purchase" items="${list}">
+                <div class="purchase-item mb-8 border-t border-gray-200 pt-6">
+                    <!-- 날짜 및 주문상세 버튼 -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm text-gray-600">
+                            ${purchase.orderDate}
+                        </div>
+                        <button class="order-detail-btn text-sm border border-gray-300 px-4 py-2 hover:bg-gray-50" 
+                                data-tranno="${purchase.tranNo}">
+                            주문상세
+                        </button>
+                    </div>
 
-<body bgcolor="#ffffff" text="#000000">
+                    <!-- 상품 정보 -->
+                    <div class="flex gap-4">
+                        <!-- 썸네일 -->
+                        <div class="flex-shrink-0">
+                            <img src="/images/uploadFiles/${purchase.purchaseProd.fileName}" 
+                                 alt="${purchase.purchaseProd.fileName}"  
+                                 class="w-24 h-24 object-cover">
+                        </div>
 
-<div style="width: 98%; margin-left: 10px;">
+                        <!-- 상품 상세 -->
+                        <div class="flex-1">
+                            <h3 class="font-medium mb-1">${purchase.purchaseProd.prodName}</h3>
+                            <p class="text-sm text-gray-600 mb-2 line-clamp-2">${purchase.purchaseProd.prodDetail}</p>
+                            <p class="font-semibold">${purchase.purchaseProd.price}원</p>
+                        </div>
 
-<form name="detailForm">
-<table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
-	<tr>
-		<td width="15" height="37"><img src="/images/ct_ttl_img01.gif"width="15" height="37"></td>
-		<td background="/images/ct_ttl_img02.gif" width="100%" style="padding-left: 10px;">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="93%" class="ct_ttl01">구매 목록조회</td>
-				</tr>
-			</table>
-		</td>
-		<td width="12" height="37"><img src="/images/ct_ttl_img03.gif"	width="12" height="37"></td>
-	</tr>
-</table>
+                    </div>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0"	style="margin-top: 10px;">
-	<tr>
-		<td colspan="11">
-			전체  ${resultPage.totalCount } 건수, 현재 ${resultPage.currentPage}  페이지
-		</td>
-	</tr>
-	<tr>
-		<td class="ct_list_b" width="100">No</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="150">회원ID</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b" width="150">회원명</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">전화번호</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">배송현황</td>
-		<td class="ct_line02"></td>
-		<td class="ct_list_b">정보수정</td>
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="808285" height="1"></td>
-	</tr>
-	<c:set var="i" value="0" />
-	<c:forEach var="purchase" items="${list}">
-		<c:set var="i" value="${ i+1 }" />
-		<tr class="ct_list_pop">
-			<!-- No -->
-			<td align="center" data-tranno="${purchase.tranNo}" style="cursor:pointer;">${i}</td>
-			<td></td>
-			
-			<!-- 회원ID -->
-			<td align="left" data-userid="${purchase.buyer.userId}" style="cursor:pointer;">${purchase.buyer.userId}</td>
-			<td></td>
-			
-			<!-- 회원명 -->
-			<td align="left">${purchase.receiverName}</td>
-			<td></td>
-			
-			<!-- 전화번호 -->
-			<td align="left">${purchase.receiverPhone}</td>
-			<td></td>
-			
-			<!-- 배송현황 -->
-			<td align="left">
-			    현재 ${purchase.tranCodeName}상태 입니다.
-			</td>
-			<td></td>
-			
-			<!-- 정보수정 -->
-			<td align="left">
-			    <c:if test="${purchase.tranCode.trim() eq '2'}">
-			    	<span class="arrival-btn" data-tranno="${purchase.tranNo}" style="cursor:pointer;">물건도착</span>
-				</c:if>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="11" bgcolor="D6D7D6" height="1"></td>
-		</tr>
-	</c:forEach>
-</table>
+                    <!-- 배송현황 & 정보수정 -->
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex gap-3">
+                        <div class="flex-1 text-sm text-gray-700">
+                            배송현황: <span class="font-medium">${purchase.tranCodeName}</span>
+                        </div>
+                        <div>
+                            <c:if test="${purchase.tranCode.trim() eq '2'}">
+                                <button class="arrival-btn text-sm bg-black text-white px-6 py-2 hover:bg-gray-800"
+                                        data-tranno="${purchase.tranNo}">
+                                    구매확정
+                                </button>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 10px;">
-	<tr>
-		<td align="center">
-		 	<input type="hidden" id="currentPage" name="currentPage" value=""/>
-		 	
-			<jsp:include page="../common/pageNavigator.jsp" />
-			
-		</td>
-	</tr>
-</table>
-<!--  페이지 Navigator 끝 -->
-
-</form>
-
-</div>
+        <!-- 로딩 인디케이터 -->
+        <div id="loading-indicator" class="text-center py-8">
+            <div class="inline-block w-8 h-8 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+        </div>
+    </div>
 </body>
 </html>

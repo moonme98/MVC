@@ -1,81 +1,195 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>로그인 화면</title>
+	<meta charset="UTF-8">
+	
+	<title>로그인 화면</title>
+	
+	<link rel="stylesheet" href="/css/admin.css" type="text/css">
+	
+	<!-- CDN(Content Delivery Network) 호스트 사용 -->
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript">
+	   
+		$( function() {
+			
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			$("#userId").focus();
+			
+			//==>"Login"  Event 연결
+			$("img[src='/images/btn_login.gif']").on("click" , function() {
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.6/kakao.min.js"></script>
+				var id=$("input:text").val();
+				var pw=$("input:password").val();
+				
+				if(id == null || id.length <1) {
+					alert('ID 를 입력하지 않으셨습니다.');
+					$("input:text").focus();
+					return;
+				}
+				
+				if(pw == null || pw.length <1) {
+					alert('패스워드를 입력하지 않으셨습니다.');
+					$("input:password").focus();
+					return;
+				}
+				
+				////////////////////////////////////////////////// 추가 , 변경된 부분 ////////////////////////////////////////////////////////////
+				//$("form").attr("method","POST").attr("action","/user/login").attr("target","_parent").submit();
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				$.ajax( 
+						{
+							url : "/user/json/login",
+							method : "POST" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							data : JSON.stringify({
+								userId : id,
+								password : pw
+							}),
+							success : function(JSONData , status) {
 
-<script>
-$(function() {
-    // ----------------------
-    // 카카오 SDK 초기화
-    // ----------------------
-    Kakao.init('YOUR_JAVASCRIPT_KEY'); // <-- JavaScript Key 입력
-    console.log(Kakao.isInitialized() ? "Kakao SDK 초기화 완료" : "SDK 초기화 실패");
-
-    // ----------------------
-    // 일반 로그인
-    // ----------------------
-    $("#loginBtn").click(function() {
-        var id = $("#userId").val();
-        var pw = $("#password").val();
-        if(!id || !pw){ alert("ID와 비밀번호 입력"); return; }
-
-        $.ajax({
-            url: "/user/logrksrin",   // 기존 POST 로그인 컨트롤러
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ userId: id, password: pw }),
-            success: function(){ window.location.href="/index.jsp"; },
-            error: function(){ alert("로그인 실패"); }
-        });
-    });
-
-    $("input:text, input:password").on("keyup", function(e){
-        if(e.keyCode === 13) $("#loginBtn").click();
-    });
-
-    // ----------------------
-    // 카카오 로그인 버튼
-    // ----------------------
-    $("#kakao-login-btn").click(function() {
-        Kakao.Auth.authorize({
-            redirectUri: 'http://localhost:8080/user/kakaoLogin'
-        });
-    });
-
-    // ----------------------
-    // 회원가입
-    // ----------------------
-    $("#signupBtn").click(function(){
-        window.location.href="/user/addUser";
-    });
-});
-</script>
-
+								//Debug...
+								//alert(status);
+								//alert("JSONData : \n"+JSONData);
+								//alert( "JSON.stringify(JSONData) : \n"+JSON.stringify(JSONData) );
+								//alert( JSONData != null );
+								
+								if( JSONData != null ){
+									//[방법1]
+									//$(window.parent.document.location).attr("href","/index.jsp");
+									
+									//[방법2]
+									//window.parent.document.location.reload();
+									
+									//[방법3]
+									$(window.parent.frames["topFrame"].document.location).attr("href","/layout/top.jsp");
+									$(window.parent.frames["leftFrame"].document.location).attr("href","/layout/left.jsp");
+									$(window.parent.frames["rightFrame"].document.location).attr("href","/user/getUser?userId="+JSONData.userId);
+									
+									//==> 방법 1 , 2 , 3 결과 학인
+								}else{
+									alert("아이디 , 패스워드를 확인하시고 다시 로그인...");
+								}
+							}
+					}); 
+					////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								
+			});
+		});
+		
+		
+		//============= 회원원가입화면이동 =============
+		$( function() {
+			//==> 추가된부분 : "addUser"  Event 연결
+			$("img[src='/images/btn_add.gif']").on("click" , function() {
+				self.location = "/user/addUser"
+			});
+		});
+		
+	</script>		
+	
 </head>
-<body>
+
+<body bgcolor="#ffffff" text="#000000" >
+
 <form>
-    <div>
-        <h2>일반 로그인</h2>
-        <input type="text" id="userId" placeholder="ID"><br>
-        <input type="password" id="password" placeholder="Password"><br>
-        <button type="button" id="loginBtn">로그인</button>
-        <button type="button" id="signupBtn">회원가입</button>
-    </div>
 
-    <hr>
+<div align="center" >
 
-    <div>
-        <h2>카카오 로그인</h2>
-        <a href="javascript:void(0)" id="kakao-login-btn">
-            <img src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg" width="222">
-        </a>
-    </div>
+<TABLE WITH="100%" HEIGHT="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
+<TR>
+<TD ALIGN="CENTER" VALIGN="MIDDLE">
+
+<table width="650" height="390" border="5" cellpadding="0" cellspacing="0" bordercolor="#D6CDB7">
+  <tr> 
+    <td width="10" height="5" align="left" valign="top" bordercolor="#D6CDB7">
+    	<table width="650" height="390" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="305">
+            <img src="/images/logo-spring.png" width="305" height="390"/>
+          </td>
+          <td width="345" align="left" valign="top" background="/images/login02.gif">
+          	<table width="100%" height="220" border="0" cellpadding="0" cellspacing="0">
+              <tr> 
+                <td width="30" height="100">&nbsp;</td>
+                <td width="100" height="100">&nbsp;</td>
+                <td height="100">&nbsp;</td>
+                <td width="20" height="100">&nbsp;</td>
+              </tr>
+              <tr> 
+                <td width="30" height="50">&nbsp;</td>
+                <td width="100" height="50">
+                	<img src="/images/text_login.gif" width="91" height="32"/>
+                </td>
+                <td height="50">&nbsp;</td>
+                <td width="20" height="50">&nbsp;</td>
+              </tr>
+              <tr> 
+                <td width="200" height="50" colspan="4"></td>
+              </tr>              
+              <tr> 
+                <td width="30" height="30">&nbsp;</td>
+                <td width="100" height="30">
+                	<img src="/images/text_id.gif" width="100" height="30"/>
+                </td>
+                <td height="30">
+                  <input 	type="text" name="userId"  id="userId"  class="ct_input_g" 
+                  				style="width:180px; height:19px"  maxLength='50'/>          
+          		</td>
+                <td width="20" height="30">&nbsp;</td>
+              </tr>
+              <tr> 
+                <td width="30" height="30">&nbsp;</td>
+                <td width="100" height="30">
+                	<img src="/images/text_pas.gif" width="100" height="30"/>
+                </td>
+                <td height="30">                    
+                    <input 	type="password" name="password" class="ct_input_g" 
+                    				style="width:180px; height:19px"  maxLength="50" />
+                </td>
+                <td width="20" height="30">&nbsp;</td>
+              </tr>
+              <tr> 
+                <td width="30" height="20">&nbsp;</td>
+                <td width="100" height="20">&nbsp;</td>
+                <td height="20" align="center">
+   				    <table width="136" height="20" border="0" cellpadding="0" cellspacing="0">
+                       <tr> 
+                         <td width="56">
+                         		<img src="/images/btn_login.gif" width="56" height="20" border="0"/>
+                         </td>
+                         <td width="10">&nbsp;</td>
+                         <td width="70">
+                       			<img src="/images/btn_add.gif" width="70" height="20" border="0">
+                         </td>
+                       </tr>
+                     </table>
+                 </td>
+                 <td width="20" height="20">&nbsp;</td>
+                </tr>
+              </table>
+            </td>
+      	</tr>                            
+      </table>
+      </td>
+  </tr>
+</table>
+</TD>
+</TR>
+</TABLE>
+
+</div>
+
 </form>
+
 </body>
+
 </html>
