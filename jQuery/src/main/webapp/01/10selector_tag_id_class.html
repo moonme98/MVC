@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<style type="text/css">
+	
+		/* html element 이름으로 접근 */
+		span {
+			background-color: yellow ; 
+			font-size: 10pt;
+		}
+		
+		/* class attribute 로 접근 */
+		.abc{
+			background-color: green ; 
+			font-size: 20pt;
+		}
+		
+		/* id attribute 로 접근 */
+		#uniqueId{
+			background-color: red ; 
+			font-size: 30pt;
+		}
+		
+	</style>
+	
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		
+		/*	//==> onlyCSS02.html 참조 <== //
+			■ Selector (선택자) : DOM(문서객체모델) 를 다루기 위해 Element Object GET
+			- tag 선택자 		: $("elementName")
+			- id 선택자 			: $("#id")
+			- class 선택자		: $(".className")	*/
+			
+		$( function(){
+			
+			//==> 아래의 각각를 주석처리하며 실행 의미 이해
+			
+			// 1. Tag Selector : Element name 이용 선택 Element Object GET
+			//var divElem = $("div");
+			//divElem.css('color', 'yellow');
+			//$("div").css('color', 'yellow');
+			
+			
+			// 2. id Selector : Unique 한 id 이용 Element Object GET
+			//var obj = $("#uniqueId");
+			//obj.css('color', 'green');
+			//$("#uniqueId").css('color', 'yellow');
+			
+			// 2. class Selector : class attribute name 이용 Element Object GET
+			//var obj = $(".abc");
+			//obj.css('color', 'yellow');
+			//$(".abc").css('color', 'yellow');
+		
+		});
+
+	</script>
+	
+</head>
+
+<body>
+	
+	<span> Framework 이란?</span>
+	<span class="abc">javascript Framework</span>
+	<div id="uniqueId">jQuery Framework</div>		
+
+</body>
+	
+</html>

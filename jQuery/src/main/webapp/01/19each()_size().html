@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		
+	/*
+	ㅇ jQuery 제공 function : www.jquery.com  : API 참조
+		 - object.each( CallBackMethod ) : 반복문 //==>Java Enhanced For Loop
+		 - each( object , CallBackMethod ) : 반복문 //==>Java Enhanced For Loop 
+		 
+		 - size() ==  length : 객체가 내부적으로 가지고 있는 element 갯수
+	*/
+	
+	$( function(){
+		
+		var obj = $('p');
+		//alert("$('p').size() : " + obj.size());
+		//alert("$('p').length : " + obj.length);
+		
+		/* [1번째 Test]  Java Syntax : Enhanced For Loop
+		
+		var value = ""
+		var i = 0;
+		
+		$('p').each( function(){
+		//obj.each( function(){
+			i++;
+			value += i +" : "+ $(this).html()+"\n"
+			alert(value);
+		});
+		//*/
+		
+		
+		/* [2번째 Test] Java Syntax : Enhanced For Loop
+		//==> function 매개변수로 index 와 각각의 element 를 받을 수 있다.
+		
+		var value = ""
+		
+		obj.each( function( index , elem){
+			//value += (index+1) +" : "+ $(elem).html()+"\n"
+			value += (index+1) +" : "+ $(this).html()+"\n"
+			alert(value);
+		});
+		//*/
+		
+		
+		/* [3번째 Test] Java Syntax : Enhanced For Loop
+		//==> function 매개변수로 index 와 각각의 element 를 받을 수 있다.
+		//==> each 매개변수로 object 를 받아 처리할수 있다.
+		
+		var value = ""
+		
+		$.each( obj , function( index , elem){
+			//value += (index+1) +" : "+ $(elem).html()+"\n"
+			value += (index+1) +" : "+ $(this).html()+"\n"
+			alert(value);
+		});
+		//*/
+		
+		
+		/* [4번째 Test] : eahc() : for 문을 이해하는 측면에서....
+		//==> 각각의 결과를 확인
+		alert("$('form') : " + $('form').size());
+		alert("$('form') : " + $('form').length);
+		
+		alert("$('form')[0] : " + $( $('form')[0] ).html());
+		alert("$('form')[0] : " + $( $('form')[0] ).html().trim());
+		alert("$('form')[1] : " + $( $('form')[1] ).html());
+		alert("$('form')[1] : " + $( $('form')[1] ).html().trim());
+		
+		alert("$('form')[0] : " + $( $('form')[0] ).text());
+		alert("$('form')[0] : " + $( $('form')[0] ).text().trim());
+		alert("$('form')[1] : " + $( $('form')[1] ).text());
+		alert("$('form')[1] : " + $( $('form')[1] ).text().trim());
+		//*/			
+	});
+		
+	</script>
+	
+</head>
+
+<body>
+
+	<h1>javascript Framework : jQuery 학습</h1>
+	<h2>사용법(?)에 익숙해 지자 </h2>
+
+	<form name="test01">
+		<p>jQuery 란 ? </p>
+	</form>
+	
+	<div>
+		<p> javascript Framework</p>
+	</div>
+	
+	<form name="test02">
+		<p>framework 이란 ?
+			<span> 확장,재사용 가능한 Lib</span>
+		</p>
+	</form>
+
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration
+ 		 PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ 		"http://mybatis.org/dtd/mybatis-3-config.dtd">
+  						
+<!--	mybatis-config.xml :: MyBatis Framework  MetaData -->
+<configuration>
+
+	<!-- 1. properties 파일관리 
+	       - 애플리케이션 배포시 공통부분, 각 환경별 다른 값들은 properties 파일에 
+	        독립적으로 관리 할 수 있다.
+	       - DBMS 접속정보를 갖는 properties 화일 참조 
+	       - properties 파일에 저장된 name = value 는 ${name} 표현으로 접근가능 -->
+	<properties resource="sql/jdbc.properties"/>
+	
+	<!-- 2. 기타 설정정보 :: [MyBatis_Home]/mybatis-3.X.X.pdf 참조 -->
+	<settings>
+		<!-- select 결과 column 이 null 인 경우 setter Method 호출 유무 :: 추후학습-->
+		<setting name="callSettersOnNulls" value="true"/>
+	</settings>	
+	
+	<!-- 3. FQCN(Full Qualified Class Name) Alias(별칭관리) -->
+	<typeAliases>
+		<typeAlias alias="user" type="mybatis.service.domain.User" />
+	</typeAliases>
+	<!-- :: MyBatis는 자주사용/공통된 DataType은 내장된 Alias 를 정의해 두고 있다.
+				- string : java.lnag.String
+				- byte : java.lang.Byte :: wrapper class(7EA Character 제외)
+				- Primitive DataType : _byte 형태(7EA :char 제외)
+				- object : java.lang.Object					- map : java.util.Map
+				- hashmap : java.util.HashMap			- list	 : java.util.List
+				- arraylist : java.util.ArrayList  등 ....            
+		 	:: [MyBatis Home] / mybatis-3.X.X.pdf 참조 -->
+		 		
+	
+	<environments default="development">
+	
+		<environment id="development">
+			<!-- Transaction Definition -->
+			<transactionManager type="JDBC"/>
+			<!-- javax.sql.DataSource Definition -->      
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+			</dataSource>
+		</environment>
+	  
+	</environments>
+
+  <!-- SQL Definition :: file include -->
+  <mappers>
+    <mapper resource="sql/UserMapper.xml"/>
+    <mapper resource="sql/UserMapper01.xml"/>
+  	<mapper resource="sql/UserMapper02.xml"/>
+  	<mapper resource="sql/UserMapper03.xml"/>
+  	<mapper resource="sql/UserMapper04.xml"/>
+  	<mapper resource="sql/UserMapper05.xml"/>
+  	<mapper resource="sql/UserMapper06.xml"/>
+  	<mapper resource="sql/UserMapper07.xml"/>
+  	<mapper resource="sql/UserMapper08.xml"/>
+  	<mapper resource="sql/UserMapper09.xml"/>
+	<mapper resource="sql/UserMapper10.xml"/>
+  </mappers>
+
+</configuration>

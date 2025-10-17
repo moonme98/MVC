@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		
+		/*
+		■ tag Selector (선택자) 를 이용 다양한 사용법을 확인한다.
+	 	  - element Selector  : $( ' element [ , element ] ' )
+	 	  - 자손 element Selector 시  : $('element  [자손element] [ ,element  [자손element] ]')
+		*/
+		
+		$(document).ready( function(){
+			
+			//==> 아래의 각각를 주석처리하며 실행 의미 이해
+			//==> $('body  *') : 모든 , $('body > *') : 자식 element 만  //==> 차이점 확인
+			//$('body  *').css('color', 'red');
+			//$('body >  *').css('color', 'red');
+			
+			//$('body h1').css('color', 'red');
+			//$('body h2').css('color', 'red');
+			
+			//$('form').css('color', 'red');
+			//$('form p').css('color', 'red');
+			//$('form span').css('color', 'red');
+			
+			//$('body h1 , form p').css('color', 'red');
+			//$('body h1 , form span').css('color', 'red');
+			
+			//==> Selector   jQuery Object Return 
+			//==> 아래와 같이 작성 동일한 의미
+			//var  obj = $('body h1 , form span');
+			//obj.css('color', 'red');
+			//$('body h1 , form span').css('color', 'red');
+			
+		});
+	
+	</script>
+</head>
+
+<body>
+
+	<h1>javascript Framework : jQuery 학습</h1>
+	<h2>사용법(?)에 익숙해 지자 </h2>
+		
+	<form name="test01">
+		<p>jQuery 란 ? </p>
+	</form>
+	
+	<div>
+		<p> javascript Framework</p>
+	</div>
+	
+	<form name="test02">
+		<p>Framework 이란 ?
+			<span> 확장,재사용 가능한 Lib</span>
+		</p>
+	</form>
+
+</body>
+
+</html>

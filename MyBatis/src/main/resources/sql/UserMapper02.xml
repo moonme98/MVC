@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper02">
+
+  <!-- 1. # 대입자 사용 -->
+  <!--    : 파라미터를 PreparedStatement ? 로 바인딩 (SQL Injection 방지) -->
+  <select id="getUserList01" parameterType="string" resultType="mybatis.service.domain.User">
+    SELECT user_id       AS userId,
+           user_name     AS userName,
+           password,
+           age,
+           grade,
+           reg_date      AS regDate
+    FROM users
+    WHERE user_id LIKE #{value}
+  </select>
+
+  <!-- 2. $ 대입자 사용 -->
+  <!--    : 파라미터를 SQL 문자열에 직접 삽입 (SQL Injection 위험) -->
+  <select id="getUserList02" parameterType="string" resultType="mybatis.service.domain.User">
+    SELECT user_id       AS userId,
+           user_name     AS userName,
+           password,
+           age,
+           grade,
+           reg_date      AS regDate
+    FROM users
+    WHERE user_id LIKE '%${value}%'
+  </select>
+
+  <!-- 3. $ 를 이용한 동적 조건 예제 -->
+  <select id="findUser" parameterType="string" resultType="string">
+    SELECT user_name
+    FROM users
+    WHERE ${value}
+  </select>
+
+</mapper>

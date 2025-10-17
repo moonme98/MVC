@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		
+		/*
+		■ tag Selector (선택자) 를 이용 다양한 사용법을 확인한다.
+	 	  - element Selector  :  $( ' element [ , element ] ' )
+	 	  - 자손 element selector  : $('element  [자손element] [ ,element  [자손element] ]')
+	 	  - 속성 element selector  : $('element[attr | attr=value]  [ , element[attr | attr=value]  ]')
+	 	  - 필터 selector(:사용한경우)	: $('element:expresion')
+	 	      1. form  필터선택자
+	 	  		예> 	$('input:button')
+	 	  				$('input:checkbox')  등등....	
+
+		ㅇ jQuery 제공 function : www.jquery.com  : API 참조
+		 	- val() : value GET/SET
+		 	- click(CallBack Function) : click event 시 호출되는 function 등록 
+		*/
+		
+		$(document).ready( function(){
+			
+			alert( $('input:reset').val() );
+			
+			//==> type=text 2EA 무었이 출력되는지 확인 
+			alert( $('input:text').val() );
+			
+			/////////////////////////////////////////////////////////////////////////////////////////
+			//==> HINT : Array
+			//==> 해당하는 Object 가 여러개일 경우 Array element 사용함.
+			alert( $( $('input:text')[0] ).val() );
+			alert( $( $('input:text')[1] ).val() );
+			////////////////////////////////////////////////////////////////////////////////////////
+			
+			alert( $('input:text[name="addr"]').val() );
+			
+			//==> 다른 접근방식 : Array 이용
+			//var textArray = $("input:text")
+			//var textObj = $( textArray[0] );
+			//alert( textObj.val() );
+			alert(  $( $("input:text")[1] ).val() );
+		});
+		
+		 //==> click Event 등록하기
+		 //==> Selector(선택자)의 다양한 접근방식을 이해하자.
+	 	$( function(){
+	 		
+	 		$('input:text[name="name"]').click( function(){
+				$(this).val("이름변경...")	
+			})
+			
+			$( $("input:text")[1] ).click( function(){
+				$(this).val("주소변경...")	
+			})
+			
+		});		 	
+	
+	</script>
+</head>
+
+<body>
+
+	<form method='post' name="myForm">
+	
+		이름<input type='text' name='name' value='이름입력'><br>
+		주소<input type='text' name='addr' ><br><p>
+
+		사용중인 소프트웨어 선택<br>
+		<input type='checkbox' name='sw' value='hwp' checked="checked">hwp<br>
+		<input type='checkbox' name='sw' value='MS/WORD' checked="checked">MS/WORD<br>
+		<input type='checkbox' name='sw' value='EXCEL'>EXCEL<br><p>
+
+		사용중인 OS 선택<br>
+		<input type='radio' name='os' value='win2000' checked="checked">win2000<br>
+		<input type='radio' name='os' value='linux'>리눅스<br><p>
+
+		사용중인 CPU 선택<br>
+		<input type='radio' name='cpu' value='i3'>i3<br>
+		<input type='radio' name='cpu' value='i5'>i5<br>
+		<input type='radio' name='cpu' value='i7' checked="checked">i7<br>
+
+		<input type="button"  value='button전송'>
+		<input type="submit" value="submit전송">
+		<input type='reset' value='취소'>
+	
+	</form>
+
+</body>
+
+</html>

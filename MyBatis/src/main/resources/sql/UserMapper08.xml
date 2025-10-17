@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper08">
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="userSelectMap" type="mybatis.service.domain.User">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="age" column="age"/>
+        <result property="grade" column="grade"/>
+        <result property="regDate" column="reg_date"/>
+    </resultMap>
+
+    <!-- 공통 SQL 모듈 -->
+    <sql id="select-users">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+    </sql>
+
+    <sql id="orderby-userId-desc">
+        ORDER BY user_id DESC
+    </sql>
+
+    <!-- 0. 회원 추가 (사용자 요청대로 유지) -->
+    <insert id="addUser" parameterType="mybatis.service.domain.User">
+        INSERT INTO users (
+            user_id,
+            user_name,
+            password,
+            age,
+            grade,
+            reg_date
+        )
+        VALUES (
+            #{userId},
+            #{userName},
+            #{password},
+            #{age:INTEGER},
+            <if test="grade==0">null</if>
+            <if test="grade!=0">#{grade}</if>,
+            #{regDate:DATE}
+        )
+    </insert>
+
+    <!-- 1. 회원 조회 (Dynamic SQL) :: getUserList01 -->
+    <select id="getUserList01" parameterType="mybatis.service.domain.User" resultMap="userSelectMap">
+        <include refid="select-users"/>
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="userName != null">
+                user_name = #{userName}
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+        </trim>
+        <include refid="orderby-userId-desc"/>
+    </select>
+
+    <!-- 2. 회원 조회 (Dynamic SQL) :: getUserList02 -->
+    <select id="getUserList02" parameterType="mybatis.service.domain.User" resultMap="userSelectMap">
+        <include refid="select-users"/>
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="grade != 0">
+                grade = #{grade}
+            </if>
+            <if test="grade == 0">
+                grade IS NULL
+            </if>
+            <if test="age != null">
+                OR age = #{age}
+            </if>
+            <if test="age == null">
+                OR age IS NULL
+            </if>
+            <if test="age == null and regDate == null">
+                OR reg_date IS NULL
+            </if>
+        </trim>
+        <include refid="orderby-userId-desc"/>
+    </select>
+
+    <!-- 3. 회원 수정 -->
+    <update id="updateUser01" parameterType="mybatis.service.domain.User">
+        UPDATE users
+        <set>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="password != null">password = #{password},</if>
+            age = #{age:INTEGER},
+            grade = <if test="grade == 0">null</if>
+            		<if test="grade != 0">#{grade}</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 3-2. 회원 수정 (trim + if, updateUser01과 동일 로직) -->
+	<update id="updateUser02" parameterType="mybatis.service.domain.User">
+	    UPDATE users
+	    <trim prefix="SET" suffixOverrides=",">
+	        <if test="userName != null">user_name = #{userName},</if>
+	        <if test="password != null">password = #{password},</if>
+	        age = #{age:INTEGER},
+	        grade = <if test="grade == 0">null</if>
+            		<if test="grade != 0">#{grade}</if>
+	    </trim>
+	    WHERE user_id = #{userId}
+	</update>
+    
+
+    <!-- 4. 회원 삭제 -->
+    <delete id="removeUser" parameterType="string">
+        DELETE FROM users
+        WHERE user_id = #{value}
+    </delete>
+
+</mapper>

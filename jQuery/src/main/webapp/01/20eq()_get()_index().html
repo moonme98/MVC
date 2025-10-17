@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script src="../javascript/jquery-2.1.4.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		
+
+	/*
+	ㅇ jQuery 제공 function : www.jquery.com  : API 참조
+		 - eq( index ) : position 에 일치하는 jquery 
+		 - get(index) : index 에 위치히하는 element
+		 - index(expr) : index return
+	*/
+	
+	$( function(){
+		
+		//==>
+		
+		/* [1번째 Test]
+
+		alert("$('p').size() : " + $('p').size());
+		alert("$('p').eq(0).html() : \n\n" + $('p').eq(0).html());
+		alert("$('p').eq(1).html() : \n\n" + $('p').eq(1).html());
+		alert("$('p').eq(2).html() : \n\n" + $('p').eq(2).html());
+		
+		$('form').eq(1).css('color' , 'red');
+		//*/
+
+		
+		/* [2번째 Test]
+		
+		alert("$('p').size() : " + $('p').size());
+		alert(" $ ( $('p').get(0) ).html() : \n\n" + $(  $('p').get(0) ).html());
+		alert(" $ ( $('p').get(1) ).html() : \n\n" + $(  $('p').get(1) ).html());
+		alert(" $ ( $('p').get(2) ).html() : \n\n" + $(  $('p').get(2) ).html());
+		
+		$( $('form').get(1) ) .css('color' , 'red');
+		//*/
+	
+		
+		/* [4번째 Test]
+		var index = $('form').index( $('form[name=test01]') );
+		alert( index );
+		alert (  $('form').index( $('form[name=test02]') ) );
+		alert (  $('form').index( $('form[name=test03]') ) );
+		alert (  $('p').index( $("p:contains('javascript')") ) );
+		//*/
+	});
+		
+	</script>
+	
+</head>
+
+<body>
+
+	<h1>javascript Framework : jQuery 학습</h1>
+	<h2>사용법(?)에 익숙해 지자 </h2>
+
+	<form name="test01">
+		<p>jQuery 란 ? </p>
+	</form>
+	
+	<div>
+		<p> javascript Framework</p>
+	</div>
+	
+	<form name="test02">
+		<p>framework 이란 ?
+			<span> 확장,재사용 가능한 Lib</span>
+		</p>
+	</form>
+
+</body>
+
+</html>
