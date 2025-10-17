@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script type="text/javascript" src="/Ajax/10common/ajaxUtil02.js"></script>
+	<script type="text/javascript">
+	
+	 	function dispalyLog(){
+
+	 		//request객체 생성 function 호출
+	 		createRequest();
+	 		
+	 		//접속 URL 
+	 		//var url = "JSON-server-string.jsp";
+	 		var url = "JSON-server-object.jsp";
+			
+	 		//==>ajaxUtil02.js의 openSendRequest(httpURL, httpMETHOD, httpPARAM, callBackMethod) 호출
+			//==>:: open()/send()/callback() Method등 수행
+			var queryString = null;
+			openSendRequest(url,"GET",queryString,updatePage);
+	 	}
+	
+	 	//CallBackFunction Definition
+		function updatePage(){
+
+	 		if ( request.readyState ==4) {
+
+	 			if(request.status == 200){
+	 				
+	 				var serverData = request.responseText;
+			 		//==> Debug...
+	 				alert("JSONData : "+serverData);
+	 				
+			 		//==> eval() 사용 JOSN 객체로 변경
+			 		//==> JSON.parse() 사용 JOSN 객체로 변경
+			 		//var JSONData = eval("("+serverData+")");
+			 		var JSONData = JSON.parse(serverData);
+
+			 		//==> Debug...
+			 		alert("JSONData : "+JSONData);
+					
+			 		//==>3. name=value와 array접근
+					console.log("3. JSONData.aaa : "+JSONData.aaa);
+					console.log("3. JSONData.ccc[0] : "+JSONData.ccc[0]);
+					console.log("3. JSONData.ccc[2] : "+JSONData.ccc[2]);
+					
+	 			}else{
+					alert("에러 발생 : "+request.status);
+				}
+			}
+		}
+	
+	</script>
+	
+</head>
+
+<body>
+
+<input type="button" value="JSON Data 접근" onClick="javascript:dispalyLog()">
+	
+</body>
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+
+	<!--/////////////////////////////  변경된 부분 ////////////////////////
+		//==> ajaxUtil02.js 모츌처리추가
+		//==> 1. XMLHttpRequest 객체를 얻는 function :: createRequest()
+		//==> 2. open() / callback Method지정 / send()를 처리하는 function :: openSendRequest()
+		//==> 3. trim 기능을 갖는 function :: trim()
+		///////////////////////////////////////////////////////////////////////////////	 -->
+	 <script type="text/javascript" src="/Ajax/10common/ajaxUtil02.js"></script>
+	 <script type="text/javascript">
+		
+		//server로 Post 방식 request
+		function getCustomerInfo(){
+			
+			//==>ajaxUtil02.js의 createReqeust()호출
+			createRequest();
+			
+			var name = document.getElementById("name").value;
+			var phone = document.getElementById("phone").value;
+			var url ="post-orderServer.jsp";
+			
+			/*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//연결초기화 : open( Method , URL , 비동기유무 )
+			request.open("POST",url,true);
+			//send() 호출전 아래의 속성을 지정 : CallBackFunction 지정	
+			request.onreadystatechange =  updatePage;
+
+	 		//request시  data전송(POST) header설정
+	 		request.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+			//==>ajaxUtil02.js의 
+			//==>openSendRequest(httpURL, httpMETHOD, httpPARAM, callBackMethod) 호출
+			//==>:: open()/send()/callback() Method등 수행
+
+			var queryString = "name="+name+"&phone="+phone;
+	 		//Debug...
+	 		alert(queryString);
+			
+	 		//==>아래의 주석을 번갈아 GET/POST 확인
+			openSendRequest(url,"POST",queryString,updatePage);
+			//openSendRequest(url,"GET",queryString,updatePage);
+
+		}
+		
+		
+		//CallBackFunction Definition
+		function updatePage(){
+			
+			if(request.readyState == 4){
+			
+				if(request.status == 200){
+					
+					var serverData = request.responseText;
+					var displayValue =  trim(serverData);
+					//Debug...
+					alert("Server에서 받은 내용 : \n"+displayValue);
+					
+					//innerHTML속성은 Html태그안의 html 코드를 의미한다.
+					//==> 예>> 출력을 확인하여 이해하면....
+					var testInnerHtml = document.getElementById("testInnerHtml");
+					alert("예1 :: _"+testInnerHtml.innerHTML+"_");
+					alert("예2 :: _"+testInnerHtml.innerText+"_");
+					
+					//==>위의 의미를 이해했다면 :: innerHTML , innerText 
+					/*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+					//server에서 전송받은 주소 html 적용
+					document.getElementById("address").value = displayValue;  
+					//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+					document.getElementById("address").innerText = displayValue;
+		
+				}else{
+					alert("에러 발생 : "+request.status);
+				}
+			} 
+		}
+		
+	</script>
+		 
+</head>
+
+<body onload="document.forms[0].reset()">
+
+	<form>
+	
+		<p>이 &nbsp;&nbsp;&nbsp;&nbsp; 름  :  
+				<input type="text" size="14" name="name"  id ="name"/>
+		</p>
+		
+		<p>전화번호 :  
+				<input type="text" size="14" name="phone"  id="phone"/>
+		</p>
+	
+		<p>주 &nbsp;&nbsp;&nbsp;&nbsp; 소 : </p>  
+	
+		<p>
+			<textarea 	rows="3" cols="50" name="address" id="address" 
+								onclick="javascript:getCustomerInfo()" >이름을 입력후 :: 여기에click...</textarea>	
+		</p>
+				
+		<p id="testInnerHtml">XXX<input type="submit" value="주문하기" id="submit"/>YYY</p>
+		
+	</form>
+	
+</body>
+
+</html>

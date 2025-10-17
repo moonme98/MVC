@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<!-- CDN(Content Delivery Network) 호스트 사용 -->
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<!--	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// jQuery framework 에서 지원 하는 ajax 사용으로 주석처리
+	<script type="text/javascript" src="/Ajax/10common/ajaxUtil02.js"></script>
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+	
+	<script type="text/javascript">
+	
+/*/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	[[아래의 각각의 html 비교]]
+	■ 05postjQueryJSON-orderClient.html 
+		==> javascript + jQuery + ajax +JSON 사용
+	■ 06jQueryAjaxJSON-orderClient.html
+		==>  jQuery Framework 에서 지원하는 ajax 사용		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+		
+		//server로 Post 방식 request
+		function getCustomerInfo01(){
+			
+			/*
+				■ $.ajax() function 사용법 : http://api.jquery.com/jQuery.ajax/ 참조
+
+				- jQuery Ajax 지원 : $.ajax( option )
+				- option : name = value  (JSON 형식)
+				
+				- asyn : boolean   					
+					==> true(default) | false     
+				- method : http method  		
+					==> GET(default) | POST | ~~ 
+				- contentType : 서버로 전송되는 Data 형식
+					==> 'application/x-www-form-urlencoded; charset=UTF-8' (default) ~~~~
+				- data : server 전동하는 QueryString
+					==> Object | String
+				- dataType : 서버에서 받는Data 형식		
+					==> default: Intelligent Guess(알아서?) 
+					==> (xml, json, script, or html)
+				- success : function(value1 , value2)
+					==> request 성공시 호출되는 CallBackFunction
+					==> value1 : server에서 받은 Data
+					==> value2 : 상태값
+				- 기타등등....
+			*/
+			
+			$.ajax( 
+				{
+					url : "postJSON-orderServer.jsp",
+					method : "POST" ,
+					data : { 	
+									name : $("#name").val(),
+									phone : $("#phone").val()
+								} ,					
+					dataType : "text" ,
+					success : function(serverData , status) {
+						//Debug...
+						alert(status);
+						alert("Server에서 받은 내용 : \n"+serverData);
+						
+						// server Data 처리
+						var JSONData = $.parseJSON(serverData);
+						//Debug...
+						alert("JSONData : \n"+JSONData);
+						
+						var displayValue = "이름 : "+JSONData.name+"\n"
+															+"전화 : "+JSONData.phone+"\n"
+															+"주소 : "+JSONData.address;
+						
+						$("#address").val(displayValue);
+					}//end of call back fuction
+				}//end of option(key=value) 
+			); // end of  $.ajax()
+				
+		}//end of function
+		
+		
+		//server로 Post 방식 request
+		function getCustomerInfo02(){
+			
+			$.ajax( 
+				{
+					url : "postJSON-orderServer.jsp",
+					method : "POST" ,
+					data : { 	
+									name : $("#name").val(),
+									phone : $("#phone").val()
+								} ,	
+					dataType : "json" ,
+					success : function(JSONData , status) {
+						//Debug...
+						alert(status);
+						//Debug...
+						alert("JSONData : \n"+JSONData);
+						
+						var displayValue = "이름 : "+JSONData.name+"\n"
+															+"전화 : "+JSONData.phone+"\n"
+															+"주소 : "+JSONData.address;
+						
+						$("#address").val(displayValue);
+					}//end of call back fuction
+				}//end of option(key=value) 
+			); // end of  $.ajax()
+			
+		}//end of function
+		
+		
+		
+		//==> 추가된부분 : textarea click 및 onload  Event  처리 및  연결
+		$(function() {
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			 $( "textarea" ).on("click" , function() {
+				 
+				 //[ Test01 : getCustomerInfo01() ]
+				alert("Test01 : getCustomerInfo01()");
+				getCustomerInfo01();
+				
+				//[Test02 : getCustomerInfo02()];
+				//alert("Test02 : getCustomerInfo02()");
+				//getCustomerInfo02();
+			});
+			
+			 $("form")[0].reset();
+		});
+	
+	</script>
+		 
+</head>
+
+<body>
+	
+	<form>
+	
+		<p>이 &nbsp;&nbsp;&nbsp;&nbsp; 름  :  
+				<input type="text" size="14" name="name"  id ="name"/>
+		</p>
+		
+		<p>전화번호 :  
+				<input type="text" size="14" name="phone"  id="phone"/>
+		</p>
+	
+		<p>주 &nbsp;&nbsp;&nbsp;&nbsp; 소 : </p>  
+	
+		<p>
+			<textarea 	rows="3" cols="50" name="address" id="address" >이름을 입력후 :: 여기에click...</textarea>
+		</p>
+				
+		<p id="testInnerHtml"><input type="submit" value="주문하기" id="submit"/></p>
+		
+	</form>
+	
+</body>
+
+</html>

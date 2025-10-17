@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+	
+	<script type="text/javascript">
+	
+		//request = null;
+		var request = null;
+		
+		function createRequest() {
+			try{
+				request = new XMLHttpRequest();
+				//Debug..
+				alert ("XMLHttpRequest() 로 request instancet생성완료");
+			}catch(trymicrosoft){
+				try{
+					request = new ActiveXObject("Msxml2.XMLHTTP");
+					//Debug..
+					alert ("ActiveXObject(Msxml2.XMLHTTP) 로 request instancet생성완료");
+				}catch(othermicrosoft){
+					try{
+						request =new ActiveXObject("Microsoft.XMLHTTP");
+						//Debug..
+						alert ("new ActiveXObject(Microsoft.XMLHTTP) 로 request instancet생성완료");
+					}catch(failed){
+						request = null;
+					}
+				}
+			}
+			
+			if( request == null ){
+				alert ("request객체 생성시 error 발생함.");
+			}
+		}
+			
+		
+		//server로 request+data 전송 fuction    
+		function getSold(){
+			createRequest();
+			
+			var url ="calcServerAjax.jsp"
+			
+			//연결 초기화
+			request.open("GET",url,true);
+			//request.open("GET",url,false);
+
+	 		//send() 호철전 아래의 속성을 지정 : Call Back Function 지정)			
+			request.onreadystatechange =  updatePage;
+	 		
+			console.log("==> 1.request.readyState :" +request.readyState);
+	 		
+			//request시 data전송 없음
+			request.send(null);
+			console.log("==> 2.request.readyState :" +request.readyState);
+			console.log("==> 3.request.readyState :" +request.readyState);
+			console.log("==> 4.request.readyState :" +request.readyState);
+		}
+		
+		//CallBackFunction Definition 
+		function updatePage(){
+			console.log("==> updatePage() :" +request.readyState);
+		}
+		
+	</script>
+	
+</head>
+
+<body>
+
+	<h1> 판매 보고서</h1>
+	<table>
+		<tr>
+			<th>판매된 상품 갯수</th>
+			<td><span id="sold">100</span></td>
+		</tr>
+		<tr>
+			<th>상품 단가</th>
+			<td><span id="price">100</span>원</td>
+		</tr>
+	</table>
+	
+	<h2>총 매출금액 : <span id="cash">100,000원</span></h2>
+	
+	<form action="calcServerNormal.jsp" method="POST">
+		<input type="submit" value="판매보고서 다시보기(기존방식)">
+	</form>
+	
+	<form>
+		<input type="button" value="판매보고서 다시보기(ajax적용)"
+		onClick="javascript:getSold()">
+	</form>
+	
+</body>
+
+</html>

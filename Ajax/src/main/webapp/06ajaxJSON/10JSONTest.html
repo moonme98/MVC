@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+
+<html lang="ko">
+	
+<head>
+	<meta charset="UTF-8">
+
+	<script type="text/javascript">
+
+		//JSON(JavaScript Object Notation)
+	 	//==> 1. name= value Notation
+	 	var test01 ={ a:'a', b:'b', c:'c'};
+	 	
+	 	//==> 2. array Notation
+	 	var test02 =[ 'aa', 'bb', 'cc' ];
+	
+	 	//==> 3. name=value 와 array의 혼용
+		var test03 =	{
+				aaa:'aaa',
+				bbb:'bbb',
+				ccc: [ 'z','zz','zzz']
+	 	};	 	
+	 	
+		//JSON 객체접근 function
+		function dispalyLog(){
+			
+			alert("1. name=value접근");
+			console.log("1. test01.a : "+test01.a);
+			console.log("1. test01.c : "+test01.c);
+	
+			alert("2. array 접근");
+			console.log("2. test02[0] : "+test02[0]);
+			console.log("2. test02[1] : "+test02[1]);
+	
+			alert("3. name=value 와 array접근");
+			console.log("3. test03.aaa : "+test03.aaa);
+			console.log("3. test03.ccc[0] : "+test03.ccc[0]);
+			console.log("3. test03.ccc[2] : "+test03.ccc[2]);
+			
+			// JSON.stringify() : JSON Object 를 문자열 변환
+			// var text = JSON.stringify(json)
+			alert("test01 : \n" + test01);
+			alert("JSON.stringify(test01) : \n" + JSON.stringify(test01) );
+			
+			// JSON.parse() : 문자열을 JSON Object 로 변환
+			// var jsonObj = JSON.parse(text)
+			var text = JSON.stringify(test01);
+			alert("text : \n" + text)
+
+			var jsonObj = JSON.parse(text);
+			alert("jsonObj : \n" + jsonObj)
+			alert("jsonObj.a : \n" + jsonObj.a)
+		}
+
+</script>
+
+</head>
+
+<body>
+		
+	<input type="button" value="JSON Data 접근" onClick="javascript:dispalyLog()">
+	
+</body>
+
+</html>
