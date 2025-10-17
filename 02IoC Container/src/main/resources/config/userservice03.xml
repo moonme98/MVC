@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1. PropertyPlaceholderConfigurer 등록 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="config/userservice03.properties"/>
+    </bean>
+
+    <!-- 2. User Bean 정의 -->
+    <bean id="user09" class="spring.service.domain.User">
+        <property name="userId" value="${user.userId}"/>
+        <property name="password" value="${user.password}"/>
+        <property name="age" value="${user.age}"/>
+    </bean>
+     <!-- 2. User Bean 정의 -->
+    <bean id="user10" class="spring.service.domain.User">
+        <property name="userId" value="${user.userId}"/>
+        <property name="password" value="${user.password}"/>
+        <property name="age" value="${user.age}"/>
+    </bean>
+     <!-- 2. User Bean 정의 -->
+    <bean id="user11" class="spring.service.domain.User">
+        <property name="userId" value="${user.userId}"/>
+        <property name="password" value="${user.password}"/>
+        <property name="age" value="${user.age}"/>
+    </bean>
+     <!-- 2. User Bean 정의 -->
+    <bean id="user12" class="spring.service.domain.User">
+        <property name="userId" value="${user.userId}"/>
+        <property name="password" value="${user.password}"/>
+        <property name="age" value="${user.age}"/>
+    </bean>
+
+</beans>

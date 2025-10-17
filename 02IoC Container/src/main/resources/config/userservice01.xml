@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1. 기본 생성자(default constructor) -->
+    <bean id="user01" class="spring.service.domain.User"/>
+
+    <!-- 2. setter injection -->
+    <bean id="user02" class="spring.service.domain.User">
+        <property name="userId" value="hong"/>
+        <property name="password" value="1234"/>
+        <property name="age" value="25"/>
+    </bean>
+
+    <!-- 3. constructor injection (age, userId) -->
+    <bean id="user03" class="spring.service.domain.User">
+        <constructor-arg index="0" value="30"/>       <!-- age -->
+        <constructor-arg index="1" value="kim"/>      <!-- userId -->
+    </bean>
+
+    <!-- 4. constructor injection (age, password, userId) -->
+    <bean id="user04" class="spring.service.domain.User">
+        <constructor-arg index="0" value="28"/>       <!-- age -->
+        <constructor-arg index="1" value="abcd"/>     <!-- password -->
+        <constructor-arg index="2" value="park"/>     <!-- userId -->
+    </bean>
+
+    <!-- 5. setter + constructor 혼합 예시 -->
+    <bean id="user05" class="spring.service.domain.User">
+        <!-- 생성자 인젝션 -->
+        <constructor-arg index="0" value="22"/>       <!-- age -->
+        <constructor-arg index="1" value="choi"/>     <!-- userId -->
+        <!-- setter 인젝션 -->
+        <property name="password" value="pw9999"/>
+    </bean>
+
+</beans>
