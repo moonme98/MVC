@@ -42,7 +42,7 @@ public class UserController {
 		
 		System.out.println("[logon() end...]\n");
 		
-		return "/user/logon.jsp";
+		return "/user/logon";
 	}
 	
 	// 단순 navigation
@@ -58,7 +58,7 @@ public class UserController {
 		
 		System.out.println("[home() end...]\n");
 		
-		return "/user/home.jsp";
+		return "/user/home";
 	}
 	
 	// Business Logic 수행 / Navigation
@@ -69,7 +69,7 @@ public class UserController {
 		
 		System.out.println("[logonAction() method=RequestMethod.POST start....]");
 		
-		String viewName = "/user/logon.jsp";
+		String viewName = "/user/logon";
 		String message  = "[logonAction()] 아이디, 패스워드 3자이상 입력하세요.";
 	
 		/*
@@ -93,7 +93,7 @@ public class UserController {
 	        user.setActive(true);
 	        session.setAttribute("sessionUser", user);
 
-	        viewName = "/user/home.jsp";
+	        viewName = "/user/home";
 	        message  = "[logonAction()] WELCOME";
 	    }
 		
@@ -119,6 +119,6 @@ public class UserController {
 		
 		System.out.println("[logout() end...]\n");
 		
-		return "/user/logon.jsp";
+		return "/user/logon";
 	}
 }

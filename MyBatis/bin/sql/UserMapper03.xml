@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper03">
+
+    <!-- 0. 전체 조회 -->
+    <select id="getUserList" resultType="mybatis.service.domain.User">
+        SELECT user_id   AS userId,
+               user_name AS userName,
+               password,
+               age,
+               grade,
+               reg_date  AS regDate
+        FROM users
+        ORDER BY user_id
+    </select>
+
+    <!-- 1. 추가 -->
+    <insert id="addUser" parameterType="mybatis.service.domain.User">
+        INSERT INTO users
+            (user_id, user_name, password, age, grade, reg_date)
+        VALUES
+            (#{userId}, #{userName}, #{password}, #{age}, #{grade}, SYSDATE)
+    </insert>
+
+    <!-- 3. 수정 -->
+    <update id="updateUser" parameterType="mybatis.service.domain.User">
+        UPDATE users
+        SET user_name = #{userName},
+            password  = #{password},
+            age       = #{age},
+            grade     = #{grade}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 5. 삭제 -->
+    <delete id="removeUser" parameterType="java.lang.String">
+        DELETE FROM users
+        WHERE user_id = #{value}
+    </delete>
+
+</mapper>

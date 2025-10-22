@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Target Object Definition -->
+	<bean 	id="messageTarget"	class="spring.service.aop.impl.MessageImpl"/>
+					
+	<!-- advice Definition -->
+	<bean 	id="testAdvice" 	class="spring.service.aop.advice.TestAdvice"/>
+
+	<!-- Dynamic Proxy 를  생성하는 ProxyFactoryBean 생성 -->
+	<bean 	id="message" 	class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property 	name="proxyInterfaces" 	value="spring.service.aop.Message"/>
+		<property name="interceptorNames"  value="testAdvice"/>
+		<property name="target" ref="messageTarget"/>
+	</bean>	
+</beans>

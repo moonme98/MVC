@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Target Object Definition -->
+	<bean 	id="messageTarget"	class="spring.service.aop.impl.MessageImpl"/>
+					
+	<!-- advice Definition -->
+	<bean 	id="testAdvice"		class="spring.service.aop.advice.TestAdvice"/>
+					
+	<!-- 	Point Cut Definition : advice 를 어느 join-point 에 적용 Rule
+			Point Cut Definition 삭제 :: Aspect 내부에 Point Cut injection-->
+
+	<!-- Advisor(Aspect)  Definition: advice + Point Cut -->
+	<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->					
+	<!-- /// 변경 사항 : point cut 정보를 직접 Advisor 에 injection 가능 /// -->
+	 <bean 	id="testAdvisor"
+			class="org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor">
+			<property name="advice" ref="testAdvice"/>
+			<!-- execution( ?   *    *.getMessage(	..	)  ) : 메서드가 실행될 때
+									 	l	  l		l			l		  인자의 갯수에 무관
+										 l	  l		l 		getMessage 메서드 
+										 l	  l	 모든 클래스 의...  
+										 l	any  type return
+						 	Acess Modifer              		 -->				
+			<property name="expression" value="execution(* *.getMessage(..))" />
+	</bean>
+	<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->		
+	
+	<!-- Dynamic Proxy 를  생성하는 ProxyFactoryBean 생성 -->
+	<bean 	id="message"  class="org.springframework.aop.framework.ProxyFactoryBean">
+		<!-- 아래의 proxyInterfaces 를 injection 하는 부분을 주석처리하고 실행해 보면..
+		       ==> ProxyFactoryBean 은 Target Object 의 상위 interface을 찾을수 있는 기능이 있다. -->	
+		<!-- <property 	name="proxyInterfaces" 	value="spring.service.aop.Message"/> -->
+		<property name="interceptorNames" value="testAdvisor" />
+		<property name="target" ref="messageTarget"/>
+	</bean>	
+	
+</beans>

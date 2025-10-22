@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper10">
+
+    <!-- resultMap -->
+    <resultMap id="userSelectMap" type="user">
+        <id property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_date" jdbcType="DATE"/>
+    </resultMap>
+
+	<!-- 0. 회원 추가 -->
+    <insert id="addUser" parameterType="user">
+        INSERT INTO users (
+            user_id,
+            user_name,
+            password,
+            age,
+            grade,
+            reg_date
+        )
+        VALUES (
+            #{userId},
+            #{userName},
+            #{password},
+            #{age:INTEGER},
+            <if test="grade==0">null</if>
+            <if test="grade!=0">#{grade}</if>,
+            #{regDate:DATE}
+        )
+    </insert>
+    
+     <!-- 2. userId 로 유저 조회 -->
+	 <select id="getUser" parameterType="string" resultMap="userSelectMap">
+	    SELECT user_id,
+	           user_name,
+	           password,
+	           age,
+	           grade,
+	           reg_date
+	    FROM users
+	    WHERE user_id = #{value}
+	 </select>
+    
+    <!-- 3. 회원 수정 -->
+    <update id="updateUser" parameterType="user">
+        UPDATE users
+        <set>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="password != null">password = #{password},</if>
+            age = #{age:INTEGER},
+            grade = <if test="grade == 0">null</if>
+            		<if test="grade != 0">#{grade}</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+    
+     <!-- 4. 회원 삭제 -->
+	 <delete id="removeUser" parameterType="string">
+	        DELETE FROM users
+	        WHERE user_id = #{value}
+	 </delete>
+	 
+	<!-- 공통 SQL 모듈 -->
+    <sql id="select-users">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+    </sql>
+    
+    <sql id="orderby-userId-desc">
+        ORDER BY user_id DESC
+    </sql>
+    
+     <select id="getUserList" parameterType="mybatis.service.domain.User" resultMap="userSelectMap">
+        <include refid="select-users"/>
+        <where>
+        	<choose>
+        		<when test="searchCondition=='userId'">
+        			<if test="userId.size !=0">
+		                user_id IN
+		            </if>
+		            <foreach item="value"  collection="userId"
+		            	open="(" separator="," close=")">
+		            	#{value}
+		            </foreach>
+        		</when>
+        		<when test="searchCondition=='userName'">
+        			<if test="userName[0]">
+		                user_name IN
+		            </if>
+		            <foreach item="value"  collection="userName"
+		            	open="(" separator="," close=")">
+		            	#{value}
+		            </foreach>
+        		</when>
+        	</choose>
+        </where>
+        <include refid="orderby-userId-desc"/>
+    </select>
+</mapper>

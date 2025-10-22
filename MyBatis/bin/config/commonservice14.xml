@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+		xmlns:context="http://www.springframework.org/schema/context"
+
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation=
+				"http://www.springframework.org/schema/beans 
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+
+				http://www.springframework.org/schema/context 
+				http://www.springframework.org/schema/context/spring-context.xsd">
+				
+	<!-- PropertyPlaceholderConfigurer 로 로드된 resource 는 ${  } 로 접근 가능 -->
+	<bean id="propertyConfigurer"
+				class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:config/jdbc.properties" />
+	</bean>
+
+	<!-- 네엣 : DBCP (Apache Commons Database Connection) 사용 -->
+	<bean id="dataSource"	
+				class="org.apache.commons.dbcp.BasicDataSource" >
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+	</bean>												 
+												 
+	<!-- ㅇ SqlSession 인스턴스를 생성하는 SqlSessionFactory 생성
+	      ㅇ Factory Pattern  적용 :: Spring 의 FactoryBean interface 구현 -->
+	<bean 	id="sqlSessionFactoryBean" 
+					class="org.mybatis.spring.SqlSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:sql/mybatis-config13.xml"/>
+	</bean>
+	
+	<!--  ㅇ SqlSessionTeampate 인스턴스생성
+		   ㅇ Spring 과 연동시 사용하는 핵심 SqlSession 구현체
+		   ㅇ Spring 에서 제공한는 Transaction 처리에 구조화된 SqlSession 구현체	 -->
+	<bean		id="sqlSessionTemplate"		class="org.mybatis.spring.SqlSessionTemplate" >		
+		<constructor-arg ref="sqlSessionFactoryBean"/>
+	</bean>				
+	
+	<!-- 	ㅇ 어노테이션 기반 :: Spring Framework 사용.
+			ㅇ 사용 annotaion : @Component, @Autowired , @Resource 
+		
+		1. @Autowired 사용시 :: 아래의 bean 객체 등록 필요
+		<bean 	class=org.springframework.beans.factory.annotation
+									.AutowiredAnnotationBeanPostProcessor/>
+		2. @Resource 사용시 :: 아래의 bean 객체 등록 필요
+		<bean 	class=org.springframework.context.annotation.
+									CommonAnnotationBeanPostProcessor />
+		3. @Component 사용시 :: 아래의 등록 필요..
+			<context:component-scan base-package="~~~"/>
+			
+		3번의 <context:component-scan base-package="~~~"/> 등록시
+		1,2번 자동 등록으로 1,2 설정 불필요 (xml namespace 등록 필요 )
+		
+		4. J2EE 1.6에 추가된 @inject 사용
+		5. @Component 를 layer 별로 세분화한.
+		     @Service , @Controller , @ Repository 사용 	-->				
+	
+	<context:component-scan base-package="mybatis.service.user.impl"/>
+	
+	<!-- ////////////////////////// 아래의 설정을 Annotation 으로 처리 :: java 코드 확인 -->
+	<!--ㅇ MyBatis 사용 DAO 생성및 SqlSession injection 
+	<bean id="userDaoImpl14" class="mybatis.service.user.impl.UserDaoImpl14" >
+		<property name="sqlSession" ref="sqlSessionTemplate"/>
+	</bean> -->
+	
+	<!-- ㅇ userService 생성 및 MyBatis 사용 DAO injection
+	<bean 	id="userServiceImpl14" 	class="mybatis.service.user.impl.UserServiceImpl14" >		
+		<property name="userDao" ref="userDaoImpl14"/>
+	</bean> -->
+
+</beans>

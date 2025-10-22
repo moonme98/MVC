@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper09">
+
+    <!-- resultMap -->
+    <resultMap id="userSelectMap" type="mybatis.service.domain.User">
+        <id property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_date" jdbcType="DATE"/>
+    </resultMap>
+
+    <!-- 1. userId ArrayList + where -->
+    <select id="getUserList01" parameterType="mybatis.service.domain.Search" resultMap="userSelectMap">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+        <where>
+            <if test="userId.size != 0">
+                user_id IN
+                <foreach collection="userId" item="value" open="(" separator="," close=")">
+                    #{value}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY reg_date DESC
+    </select>
+
+    <!-- 2. userName Array + where -->
+    <select id="getUserList02" parameterType="mybatis.service.domain.Search" resultMap="userSelectMap">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+        <where>
+            <if test="userName[0] != null">
+                user_name IN
+                <foreach collection="userName" item="value" open="(" separator="," close=")">
+                    #{value}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY reg_date DESC
+    </select>
+
+    <!-- 3. userId ArrayList + trim -->
+    <select id="getUserList03" parameterType="mybatis.service.domain.Search" resultMap="userSelectMap">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="userId.size != 0">
+                AND user_id IN
+                <foreach collection="userId" item="value" open="(" separator="," close=")">
+                    #{value}
+                </foreach>
+            </if>
+        </trim>
+        ORDER BY reg_date DESC
+    </select>
+
+    <!-- 4. userName Array + trim -->
+    <select id="getUserList04" parameterType="mybatis.service.domain.Search" resultMap="userSelectMap">
+        SELECT user_id, user_name, password, age, grade, reg_date
+        FROM users
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="userName[0] != null">
+                AND user_name IN
+                <foreach collection="userName" item="value" open="(" separator="," close=")">
+                    #{value}
+                </foreach>
+            </if>
+        </trim>
+        ORDER BY reg_date DESC
+    </select>
+
+</mapper>

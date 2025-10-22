@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper05">
+
+    <!-- ResultMap 명시적 정의 + jdbcType -->
+    <resultMap id="userSelectMap" type="mybatis.service.domain.User">
+        <id property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="grade" column="grade" jdbcType="NUMERIC"/>
+        <result property="regDate" column="reg_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 1. 회원 추가 -->
+    <insert id="addUser" parameterType="mybatis.service.domain.User">
+        INSERT INTO users (
+            user_id,
+            user_name,
+            password,
+            age,
+            grade,
+            reg_date
+        )
+        VALUES (
+            #{userId, jdbcType=VARCHAR},
+            #{userName, jdbcType=VARCHAR},
+            #{password, jdbcType=VARCHAR},
+            #{age, jdbcType=INTEGER},
+            #{grade, jdbcType=NUMERIC},
+            #{regDate, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!-- 2. 회원 조회 (단일) :: getUser01 (직접 매핑) -->
+    <select id="getUser01" parameterType="string"
+            resultType="mybatis.service.domain.User">
+        SELECT
+            user_id AS userId,
+            user_name AS userName,
+            password,
+            age,
+            grade,
+            reg_date AS regDate
+        FROM users
+        WHERE user_id = #{userId, jdbcType=VARCHAR}
+    </select>
+
+    <!-- 2-1. 회원 조회 (단일) :: getUser02 (외부 ResultMap 사용) -->
+    <select id="getUser02" parameterType="string"
+            resultMap="userSelectMap">
+        SELECT
+            user_id,
+            user_name,
+            password,
+            age,
+            grade,
+            reg_date
+        FROM users
+        WHERE user_id = #{userId, jdbcType=VARCHAR}
+    </select>
+
+    <!-- 3. 회원 전체 목록 조회 -->
+    <select id="getUserList" resultMap="userSelectMap">
+        SELECT
+            user_id,
+            user_name,
+            password,
+            age,
+            grade,
+            reg_date
+        FROM users
+        ORDER BY user_id
+    </select>
+
+    <!-- 4. 회원 삭제 -->
+    <delete id="removeUser" parameterType="string">
+        DELETE FROM users
+        WHERE user_id = #{userId, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

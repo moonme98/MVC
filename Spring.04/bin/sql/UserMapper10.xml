@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserMapper10">
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="userResultMap" type="com.model2.mvc.service.domain.User">
+        <id property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="age" column="age" jdbcType="INTEGER"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 1. addUser -->
+    <insert id="addUser" parameterType="com.model2.mvc.service.domain.User">
+        INSERT INTO users (user_id, user_name, password, age, grade, reg_date)
+        VALUES (#{userId}, #{userName}, #{password}, #{age}, #{grade}, #{regDate})
+    </insert>
+
+    <!-- 2. loginUser -->
+    <select id="loginUser" parameterType="com.model2.mvc.service.domain.User" resultMap="userResultMap">
+        SELECT *
+        FROM users
+        WHERE user_id = #{userId} AND password = #{password}
+    </select>
+
+    <!-- 3. getUser -->
+    <select id="getUser" parameterType="string" resultMap="userResultMap">
+        SELECT *
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 4. getUserList -->
+    <select id="getUserList" parameterType="com.model2.mvc.common.Search" resultMap="userResultMap">
+        SELECT *
+        FROM users
+        <where>
+            <if test="searchCondition != null and searchKeyword != null">
+                <choose>
+                    <when test="searchCondition == 'userId'">
+                        user_id LIKE CONCAT('%', #{searchKeyword}, '%')
+                    </when>
+                    <when test="searchCondition == 'userName'">
+                        user_name LIKE CONCAT('%', #{searchKeyword}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ORDER BY reg_date DESC
+    </select>
+
+    <!-- 5. updateUser -->
+    <update id="updateUser" parameterType="com.model2.mvc.service.domain.User">
+        UPDATE users
+        <set>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="grade != null">grade = #{grade},</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 6. checkDuplication -->
+    <select id="checkDuplication" parameterType="string" resultType="boolean">
+        SELECT COUNT(1) > 0
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+</mapper>
